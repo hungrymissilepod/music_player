@@ -78,6 +78,17 @@ class HomeView extends StackedView<HomeViewModel> {
                           ),
                         ],
                       ),
+                      TextButton(
+                        child: const Text(
+                          'Play from URL',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        onPressed: () {
+                          viewModel.playFromUrl();
+                        },
+                      ),
                       verticalSpaceLarge,
 
                       /// fft range slider values to put into the texture
@@ -115,7 +126,7 @@ class HomeView extends StackedView<HomeViewModel> {
                             textureType: type,
                           );
                         },
-                      )
+                      ),
                     ],
                   ),
                 ],

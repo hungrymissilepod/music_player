@@ -20,15 +20,15 @@ class HomeViewModel extends BaseViewModel {
 
   List<String> exampleSongs = [
     'baddadan.mp3',
-    'massive and crew.mp3',
+    'sample.mp3',
+    'sample2.mp3',
+    'massive&crew.mp3',
     'leavemealone.mp3',
-    'gods_country.mp3',
-    'highest in the room.mp3',
     'venting.mp3',
     'Tropical Beeper.mp3',
     'X trackTure.mp3',
     '8_bit_mentality.mp3',
-    'range_test.mp3'
+    'range_test.mp3',
   ];
 
   int currentSong = 0;
@@ -77,6 +77,15 @@ class HomeViewModel extends BaseViewModel {
     }
     notifyListeners();
     await playCurrentExampleSong();
+  }
+
+  Future<void> playFromUrl() async {
+    final String url =
+        'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Kangaroo_MusiQue_-_The_Neverwritten_Role_Playing_Game.mp3';
+    SoundProps? soundProps = await SoloudTools.loadFromUrl(url);
+    if (soundProps != null) {
+      await SoLoud().play(soundProps);
+    }
   }
 
   /// plays an assets file

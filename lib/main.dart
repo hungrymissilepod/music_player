@@ -31,10 +31,7 @@ Change these values in Runner.rc:
 
 TODO:
 
-- Work out why some songs are failing to load. Either something wrong with my code or the files are corrupted??
-- Add more songs and make a way to cycle through them and stop playing sound (basic player)
 - Get average frequencies for bass, mid, high, etc using the method that I created in flutter_soloud repo
-- Try playing a song from a url
 - Now we can start creating custom painters
 
 
