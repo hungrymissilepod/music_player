@@ -36,6 +36,7 @@ class SoLoudHandler {
   late Future<ui.Image?> Function() buildImageCallback;
   late int Function(int row, int col) textureTypeCallback;
   int nFrames = 0;
+  Uint8List? bitMapImage;
 
   final ValueNotifier<double> soundLength = ValueNotifier(0);
 
@@ -75,6 +76,29 @@ class SoLoudHandler {
     calloc.free(playerData);
     playerData = ffi.nullptr;
   }
+
+  // bool isPlaying() {
+  //   // return true;
+  //   if (playerData[0].value.round() == 0) {
+  //     return bitMapImage == null;
+  //   }
+  //   return true;
+
+  //   var f = playerData[0];
+
+  //   int? i = f.value.round();
+
+  //   print(i);
+  //   return true;
+
+  //   // if (playerData[0] == ffi.nullptr) {
+  //   //   if (playerData[256] == ffi.nullptr) {
+  //   //     return false;
+  //   //   }
+  //   // }
+  //   // return true;
+  //   // return playerData == ffi.nullptr;
+  // }
 
   void setupBitmapSize() {
     fftBitmapRange = visualizerController.maxFreqRange - visualizerController.minFreqRange;
@@ -208,8 +232,8 @@ class SoLoudHandler {
       }
     }
 
-    final img = fftImageMatrix.storeBitmap(bytes);
-    ui.decodeImageFromList(img, completer.complete);
+    final bitMapImage = fftImageMatrix.storeBitmap(bytes);
+    ui.decodeImageFromList(bitMapImage, completer.complete);
 
     return completer.future;
   }

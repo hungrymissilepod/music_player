@@ -32,9 +32,8 @@ Change these values in Runner.rc:
 
 TODO:
 
+- Fix bug where you can play the same sound twice accidentally. Disable play button if you just pressed it or something. Wait until the sound is played.
 - Control visualiser based on average tempo/frequency of music
-- Move all controls into a Stack
-- Add button to show and hide controls
 - Add playing position bar and allow seeking position
 - Add simple boolean that will check if player is inited and if playerData is not nullptr and if playerData is not null to check if we are playing music.
 - Change StarVisualiser to full screen behind the controls

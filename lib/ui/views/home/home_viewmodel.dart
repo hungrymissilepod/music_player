@@ -20,6 +20,13 @@ class HomeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  bool showPlayerControls = true;
+
+  void togglePlayerControls() {
+    showPlayerControls = !showPlayerControls;
+    notifyListeners();
+  }
+
   List<String> exampleSongs = [
     'baddadan.mp3',
     'sample.mp3',
@@ -36,6 +43,9 @@ class HomeViewModel extends BaseViewModel {
 
   HomeViewModel() {
     runBusyFuture(initSoLoud(), busyObject: HomeViewSection.player);
+    timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
+      _updateIsPlaying();
+    });
   }
 
   Future<void> initSoLoud() async {
@@ -55,6 +65,28 @@ class HomeViewModel extends BaseViewModel {
     final String path = 'assets/audio/${exampleSongs[currentSong]}';
     playAsset(path);
     notifyListeners();
+  }
+
+  double prevSoundPosition = 0;
+  Timer? timer;
+
+  final ValueNotifier<bool> isPlaying = ValueNotifier(false);
+
+  /// For some reason there is no simple way to check if we are currently playing music.
+  /// We need to check if there is a [currentSound] and periodically check if sound position
+  /// is changing. Therefore we assume we are playing music, otherwise we are not.
+  void _updateIsPlaying() {
+    if (currentSound != null) {
+      if (currentSound!.handle.isNotEmpty) {
+        var soundPosition = SoLoud().getPosition(currentSound!.handle.last).position;
+
+        if (soundPosition != prevSoundPosition) {
+          prevSoundPosition = soundPosition;
+          isPlaying.value = true;
+        }
+      }
+    }
+    isPlaying.value = false;
   }
 
   Future<void> stop() async {
