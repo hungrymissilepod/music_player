@@ -1,23 +1,24 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
-import 'package:flutter_app_template/ftt/ftt_controller.dart';
-import 'package:flutter_app_template/ftt/texture_type.dart';
+import 'package:flutter_app_template/ftt/soloud_handler.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_soloud/flutter_soloud.dart';
 import 'package:stacked/stacked.dart';
+import 'dart:async';
 
 enum HomeViewSection { player }
 
 class HomeViewModel extends BaseViewModel {
+  SoLoudHandler soLoudHandler = SoLoudHandler();
   SoundProps? currentSound;
 
-  final ValueNotifier<double> soundLength = ValueNotifier(0);
+  bool fpsMonitorEnabled = true;
 
-  final ValueNotifier<double> fftSmoothing = ValueNotifier(0.8);
-  final ValueNotifier<RangeValues> fftImageRange = ValueNotifier(const RangeValues(0, 255));
-  final ValueNotifier<TextureType> textureType = ValueNotifier(TextureType.fft2D);
-  FftController visualizerController = FftController()..changeIsVisualizerForPlayer(true);
+  void toggleFpsMonitor() {
+    fpsMonitorEnabled = !fpsMonitorEnabled;
+    notifyListeners();
+  }
 
   List<String> exampleSongs = [
     'baddadan.mp3',
@@ -124,7 +125,7 @@ class HomeViewModel extends BaseViewModel {
     currentSound = playRet.sound;
 
     /// get its length and notify it
-    soundLength.value = SoLoud().getLength(currentSound!).length;
+    soLoudHandler.soundLength.value = SoLoud().getLength(currentSound!).length;
 
     /// Stop the timer and dispose the sound when the sound ends
     currentSound!.soundEvents.stream.listen(
