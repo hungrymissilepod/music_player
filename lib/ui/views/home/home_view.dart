@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_template/ftt/texture_type.dart';
 import 'package:flutter_app_template/ftt/visualizer.dart';
+import 'package:flutter_soloud/flutter_soloud.dart';
 import 'package:stacked/stacked.dart';
 import 'package:flutter_app_template/ui/common/ui_helpers.dart';
 import 'package:statsfl/statsfl.dart';
@@ -56,6 +57,17 @@ class HomeView extends StackedView<HomeViewModel> {
                           ),
                           TextButton(
                             child: const Text(
+                              'Pause',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            onPressed: () {
+                              viewModel.pause();
+                            },
+                          ),
+                          TextButton(
+                            child: const Text(
                               'Stop',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
@@ -90,6 +102,27 @@ class HomeView extends StackedView<HomeViewModel> {
                         },
                       ),
                       verticalSpaceLarge,
+
+                      /// fft smoothing slider
+                      ValueListenableBuilder<double>(
+                        valueListenable: viewModel.fftSmoothing,
+                        builder: (_, smoothing, __) {
+                          return Row(
+                            children: [
+                              Text('FFT smooth: ${smoothing.toStringAsFixed(2)}'),
+                              Expanded(
+                                child: Slider.adaptive(
+                                  value: smoothing,
+                                  onChanged: (smooth) {
+                                    SoLoud().setFftSmoothing(smooth);
+                                    viewModel.fftSmoothing.value = smooth;
+                                  },
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
 
                       /// fft range slider values to put into the texture
                       ValueListenableBuilder<RangeValues>(

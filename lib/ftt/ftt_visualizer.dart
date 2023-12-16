@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_template/ftt/visualizer.dart';
 import 'dart:ffi' as ffi;
 
 class BarsFftWidget extends StatelessWidget {
@@ -56,22 +57,14 @@ class FftPainter extends CustomPainter {
   final int minFreq;
   final int maxFreq;
 
-  double calculateAverageFreq(int lowFreq, int highFreq) {
-    var nyquist = 44100 / 2;
-
-    var a = (lowFreq / nyquist * 256).round();
-    var b = (highFreq / nyquist * 256).round();
-    var total = 0.0;
-    var numFreq = 0;
-
-    // print('from: $a to $b');
-    for (int i = a; i <= b; i++) {
+  double _averageFrequency(int low, int high) {
+    double total = 0.0;
+    int numFrequencies = 0;
+    for (int i = low; i <= high; i++) {
       total += audioData[i];
-      numFreq++;
+      numFrequencies++;
     }
-
-    var average = total / numFreq;
-    return average;
+    return total / numFrequencies;
   }
 
   @override
@@ -82,45 +75,18 @@ class FftPainter extends CustomPainter {
       ..strokeWidth = barWidth * 0.8
       ..style = PaintingStyle.stroke;
 
-    // var nyquist = 44100 / 2;
-    // var freq1 = audioData[20];
+    /// TODO: should only calculate this if we are actually playing music
+    // double averageBass = _averageFrequency(bass[0], bass[1]);
+    // double averageLogMid = _averageFrequency(lowMid[0], lowMid[1]);
+    // double averageMid = _averageFrequency(mid[0], mid[1]);
+    // double averageHighMid = _averageFrequency(highMid[0], highMid[1]);
+    // double averageTreble = _averageFrequency(treble[0], treble[1]);
 
-    // var b = (freq1 / nyquist * 256);
-    // print(b);
-
-    // print(audioData[20]);
-    // print(audioData[140]);
-
-    // print(audioData[0]);
-
-    // var a = (20 / nyquist * 256).round();
-    // var b = (140 / nyquist * 256).round();
-    // var total = 0.0;
-    // var numFreq = 0;
-
-    // // print('from: $a to $b');
-    // for (int i = a; i <= b; i++) {
-    //   total += audioData[i];
-    //   numFreq++;
-    // }
-
-    /// TODO: pick up from here and work out what the bass, low end, mid, high, etc ranges are if we
-    /// only have 256 samples. Hardcode these values somewhere so that we don't needlessly calculate them each frame.
-    /// Then when we pass in the fft data we can get the averages of these values and use them in our visualisation
-
-    // var average = total / numFreq;
-
-    // var bass = calculateAverageFreq(20, 140);
-    // print('bass average: $bass');
-
-    // var lowMid = calculateAverageFreq(140, 400);
-    // print('lowMid average: ${lowMid}');
-
-    // this.bass = [20, 140];
-    // this.lowMid = [140, 400];
-    // this.mid = [400, 2600];
-    // this.highMid = [2600, 5200];
-    // this.treble = [5200, 14000];
+    // print('bass: $averageBass');
+    // print('lowMid: $averageLogMid');
+    // print('mid: $averageMid');
+    // print('highMid: $averageHighMid');
+    // print('treble: $averageTreble');
 
     for (var i = minFreq; i <= maxFreq; i++) {
       final barHeight = size.height * audioData[i];

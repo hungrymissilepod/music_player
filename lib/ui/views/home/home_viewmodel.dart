@@ -14,6 +14,7 @@ class HomeViewModel extends BaseViewModel {
 
   final ValueNotifier<double> soundLength = ValueNotifier(0);
 
+  final ValueNotifier<double> fftSmoothing = ValueNotifier(0.8);
   final ValueNotifier<RangeValues> fftImageRange = ValueNotifier(const RangeValues(0, 255));
   final ValueNotifier<TextureType> textureType = ValueNotifier(TextureType.fft2D);
   FftController visualizerController = FftController()..changeIsVisualizerForPlayer(true);
@@ -24,7 +25,6 @@ class HomeViewModel extends BaseViewModel {
     'sample2.mp3',
     'massive&crew.mp3',
     'leavemealone.mp3',
-    'venting.mp3',
     'Tropical Beeper.mp3',
     'X trackTure.mp3',
     '8_bit_mentality.mp3',
@@ -50,6 +50,7 @@ class HomeViewModel extends BaseViewModel {
   }
 
   Future<void> playCurrentExampleSong() async {
+    await stop();
     final String path = 'assets/audio/${exampleSongs[currentSong]}';
     playAsset(path);
     notifyListeners();
@@ -57,7 +58,17 @@ class HomeViewModel extends BaseViewModel {
 
   Future<void> stop() async {
     if (currentSound != null) {
-      SoLoud().stop(currentSound!.handle.first);
+      if (currentSound!.handle.isNotEmpty) {
+        SoLoud().stop(currentSound!.handle.first);
+      }
+    }
+  }
+
+  Future<void> pause() async {
+    if (currentSound != null) {
+      if (currentSound!.handle.isNotEmpty) {
+        SoLoud().pauseSwitch(currentSound!.handle.first);
+      }
     }
   }
 
@@ -73,7 +84,7 @@ class HomeViewModel extends BaseViewModel {
   Future<void> prevSong() async {
     currentSong--;
     if (currentSong < 0) {
-      currentSong = exampleSongs.length;
+      currentSong = exampleSongs.length - 1;
     }
     notifyListeners();
     await playCurrentExampleSong();
