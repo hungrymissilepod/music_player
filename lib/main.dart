@@ -9,27 +9,6 @@ import 'package:flutter_app_template/ftt/soloud_handler.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 /*
-Note: In order to publish this app please remember to change the application ID
-
-Android:
-Change this value 'com.example.flutter_app_template'
-
-iOS:
-Change this value 'com.example.flutterAppTemplate'
-
-Linux:
-Change this value 'com.example.flutter_app_template'
-
-MacOS:
-Change this value 'com.example.flutterAppTemplate' and 'com.example.flutterAppTemplate.RunnerTests'
-
-Windows:
-Change these values in Runner.rc:
-'com.example'
-'flutter_app_template'
-*/
-
-/*
 
 
 TODO:
@@ -38,6 +17,8 @@ TODO:
 - Fix player controls and make them look better
 - Make player controls fade out over time if user does not interact with them
 - try chaning big particls so they move in the z axis like the background stars do.
+- get average frequency of the song (average tempo) and use that as the baseline speed of the visualiser.
+  this way slower tempo songs are not at full speed and vice versa.
 - Add bloom shader to circle in star visualiser
 - Fix bug where you can play the same sound twice accidentally. Disable play button if you just pressed it or something. Wait until the sound is played.
 - Add playing position bar and allow seeking position
