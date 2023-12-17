@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app_template/app/app.bottomsheets.dart';
 import 'package:flutter_app_template/app/app.dialogs.dart';
@@ -32,12 +34,13 @@ Change these values in Runner.rc:
 
 TODO:
 
-- Copy experiment starfield painter into this app and try it out. Work out why the star visualiser is running so quickly.
+
+- Fix player controls and make them look better
+- Make player controls fade out over time if user does not interact with them
+- try chaning big particls so they move in the z axis like the background stars do.
+- Add bloom shader to circle in star visualiser
 - Fix bug where you can play the same sound twice accidentally. Disable play button if you just pressed it or something. Wait until the sound is played.
-- Control visualiser based on average tempo/frequency of music
 - Add playing position bar and allow seeking position
-- Add simple boolean that will check if player is inited and if playerData is not nullptr and if playerData is not null to check if we are playing music.
-- Change StarVisualiser to full screen behind the controls
 - Fix any issues and clean up code
 - Improve StarVisualiser
 - Enable playing audio when app in background
@@ -56,13 +59,13 @@ Work on other visualisers. Ideas:
 
 */
 
+Random random = Random();
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setupLocator();
   setupDialogUi();
   setupBottomSheetUi();
-  SoLoudHandler soLoudHandler = SoLoudHandler();
-  soLoudHandler.init();
   runApp(const LifecycleWatcher(child: MainApp()));
 }
 
@@ -114,7 +117,7 @@ class LifecycleWatcherState extends State<LifecycleWatcher> with WidgetsBindingO
       _lastLifecycleState = state;
       if (state == AppLifecycleState.resumed) {
         print('AppLifecycleState - resumed');
-        SoLoudHandler().init();
+        // SoLoudHandler().init();
       }
       if (state == AppLifecycleState.paused) {
         print('AppLifecycleState - paused');

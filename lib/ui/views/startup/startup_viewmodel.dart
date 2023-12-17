@@ -1,4 +1,5 @@
 import 'package:flutter_app_template/app/app.logger.dart';
+import 'package:flutter_app_template/ftt/soloud_handler.dart';
 import 'package:flutter_app_template/services/authentication_service.dart';
 import 'package:flutter_app_template/services/dio_service.dart';
 import 'package:stacked/stacked.dart';
@@ -13,18 +14,23 @@ class StartupViewModel extends BaseViewModel {
   final _logger = getLogger('StartupViewModel');
 
   Future runStartupLogic() async {
+    SoLoudHandler soLoudHandler = SoLoudHandler();
+    await soLoudHandler.init();
+    await soLoudHandler.buildImageFromAllSamplesMatrix();
+
     _navigationService.replaceWith(Routes.homeView);
     return;
-    await _dioService.get('');
-    // 2. Check if the user is logged in
-    if (_authenticationService.userLoggedIn()) {
-      _logger.i('User is logged in');
-      // 3. Navigate to HomeView
-      _navigationService.replaceWith(Routes.homeView);
-    } else {
-      _logger.i('User is NOT logged in');
-      // 4. Or navigate to LoginView
-      _navigationService.replaceWith(Routes.loginView);
-    }
+
+    // await _dioService.get('');
+    // // 2. Check if the user is logged in
+    // if (_authenticationService.userLoggedIn()) {
+    //   _logger.i('User is logged in');
+    //   // 3. Navigate to HomeView
+    //   _navigationService.replaceWith(Routes.homeView);
+    // } else {
+    //   _logger.i('User is NOT logged in');
+    //   // 4. Or navigate to LoginView
+    //   _navigationService.replaceWith(Routes.loginView);
+    // }
   }
 }

@@ -4,7 +4,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_template/ui/views/home/player_controls.dart';
-import 'package:flutter_app_template/ui/visualisers/star_visualiser.dart';
+import 'package:flutter_app_template/ui/visualisers/star_field_visualiser.dart';
 import 'package:stacked/stacked.dart';
 
 import 'home_viewmodel.dart';
@@ -23,9 +23,9 @@ class HomeView extends StackedView<HomeViewModel> {
       body: Stack(
         children: [
           viewModel.soLoudHandler.isPlayerInited
-              ? StarField(
+              ? StarFieldVisualiser(
                   starSpeed: 0.1,
-                  starCount: 100,
+                  starCount: 500,
                   audioData: viewModel.soLoudHandler.playerData.value,
                 )
               : Container(),
