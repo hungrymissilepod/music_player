@@ -45,6 +45,28 @@ class SoLoudHandler {
   final ValueNotifier<TextureType> textureType = ValueNotifier(TextureType.fft2D);
   FftController visualizerController = FftController()..changeIsVisualizerForPlayer(true);
 
+  SoundProps? currentSound;
+  double prevSoundPosition = 0;
+  final ValueNotifier<bool> isPlaying = ValueNotifier(false);
+
+  /// For some reason there is no simple way to check if we are currently playing music.
+  /// We need to check if there is a [currentSound] and periodically check if sound position
+  /// is changing. Therefore we assume we are playing music, otherwise we are not.
+  void updateIsPlaying() {
+    if (currentSound != null) {
+      if (currentSound!.handle.isNotEmpty) {
+        var soundPosition = SoLoud().getPosition(currentSound!.handle.last).position;
+
+        if (soundPosition != prevSoundPosition) {
+          prevSoundPosition = soundPosition;
+          isPlaying.value = true;
+          return;
+        }
+      }
+    }
+    isPlaying.value = false;
+  }
+
   Future<void> init() async {
     /// these constants must not be touched since SoLoud
     /// gives back a size of 256 values

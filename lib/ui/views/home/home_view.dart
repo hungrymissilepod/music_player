@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,14 +18,13 @@ class HomeView extends StackedView<HomeViewModel> {
     HomeViewModel viewModel,
     Widget? child,
   ) {
+    final ui.Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: Stack(
         children: [
           viewModel.soLoudHandler.isPlayerInited
               ? CustomPaint(
-                  painter: StarsVisualiser(
-                    audioData: viewModel.soLoudHandler.playerData.value,
-                  ),
+                  painter: StarsVisualiser(audioData: viewModel.soLoudHandler.playerData.value, canvasSize: size),
                   child: Container(),
                 )
               : Container(),

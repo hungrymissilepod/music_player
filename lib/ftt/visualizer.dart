@@ -90,8 +90,6 @@ class _VisualizerState extends State<Visualizer> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    bool b = widget.viewModel.isPlaying.value;
-    print('isPlaying: $b');
     return FutureBuilder<ui.Image?>(
       future: widget.viewModel.soLoudHandler.buildImageCallback(),
       builder: (context, dataTexture) {

@@ -11,7 +11,6 @@ enum HomeViewSection { player }
 
 class HomeViewModel extends BaseViewModel {
   SoLoudHandler soLoudHandler = SoLoudHandler();
-  SoundProps? currentSound;
 
   bool fpsMonitorEnabled = true;
 
@@ -40,12 +39,21 @@ class HomeViewModel extends BaseViewModel {
   ];
 
   int currentSong = 0;
+  Timer? timer;
 
   HomeViewModel() {
     runBusyFuture(initSoLoud(), busyObject: HomeViewSection.player);
     timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
-      _updateIsPlaying();
+      soLoudHandler.updateIsPlaying();
     });
+  }
+
+  bool isPlaying() => soLoudHandler.isPlaying.value;
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   Future<void> initSoLoud() async {
@@ -67,40 +75,18 @@ class HomeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  double prevSoundPosition = 0;
-  Timer? timer;
-
-  final ValueNotifier<bool> isPlaying = ValueNotifier(false);
-
-  /// For some reason there is no simple way to check if we are currently playing music.
-  /// We need to check if there is a [currentSound] and periodically check if sound position
-  /// is changing. Therefore we assume we are playing music, otherwise we are not.
-  void _updateIsPlaying() {
-    if (currentSound != null) {
-      if (currentSound!.handle.isNotEmpty) {
-        var soundPosition = SoLoud().getPosition(currentSound!.handle.last).position;
-
-        if (soundPosition != prevSoundPosition) {
-          prevSoundPosition = soundPosition;
-          isPlaying.value = true;
-        }
-      }
-    }
-    isPlaying.value = false;
-  }
-
   Future<void> stop() async {
-    if (currentSound != null) {
-      if (currentSound!.handle.isNotEmpty) {
-        SoLoud().stop(currentSound!.handle.first);
+    if (soLoudHandler.currentSound != null) {
+      if (soLoudHandler.currentSound!.handle.isNotEmpty) {
+        SoLoud().stop(soLoudHandler.currentSound!.handle.first);
       }
     }
   }
 
   Future<void> pause() async {
-    if (currentSound != null) {
-      if (currentSound!.handle.isNotEmpty) {
-        SoLoud().pauseSwitch(currentSound!.handle.first);
+    if (soLoudHandler.currentSound != null) {
+      if (soLoudHandler.currentSound!.handle.isNotEmpty) {
+        SoLoud().pauseSwitch(soLoudHandler.currentSound!.handle.first);
       }
     }
   }
@@ -111,7 +97,9 @@ class HomeViewModel extends BaseViewModel {
       currentSong = 0;
     }
     notifyListeners();
-    await playCurrentExampleSong();
+    if (isPlaying()) {
+      await playCurrentExampleSong();
+    }
   }
 
   Future<void> prevSong() async {
@@ -120,7 +108,9 @@ class HomeViewModel extends BaseViewModel {
       currentSong = exampleSongs.length - 1;
     }
     notifyListeners();
-    await playCurrentExampleSong();
+    if (isPlaying()) {
+      await playCurrentExampleSong();
+    }
   }
 
   Future<void> playFromUrl() async {
@@ -140,8 +130,8 @@ class HomeViewModel extends BaseViewModel {
 
   /// play file
   Future<void> _play(String file) async {
-    if (currentSound != null) {
-      if (await SoLoud().disposeSound(currentSound!) != PlayerErrors.noError) {
+    if (soLoudHandler.currentSound != null) {
+      if (await SoLoud().disposeSound(soLoudHandler.currentSound!) != PlayerErrors.noError) {
         return;
       }
     }
@@ -149,26 +139,26 @@ class HomeViewModel extends BaseViewModel {
     /// load the file
     final loadRet = await SoLoud().loadFile(file);
     if (loadRet.error != PlayerErrors.noError) return;
-    currentSound = loadRet.sound;
+    soLoudHandler.currentSound = loadRet.sound;
 
     /// play it
-    final playRet = await SoLoud().play(currentSound!);
+    final playRet = await SoLoud().play(soLoudHandler.currentSound!);
     if (loadRet.error != PlayerErrors.noError) return;
-    currentSound = playRet.sound;
+    soLoudHandler.currentSound = playRet.sound;
 
     /// get its length and notify it
-    soLoudHandler.soundLength.value = SoLoud().getLength(currentSound!).length;
+    soLoudHandler.soundLength.value = SoLoud().getLength(soLoudHandler.currentSound!).length;
 
     /// Stop the timer and dispose the sound when the sound ends
-    currentSound!.soundEvents.stream.listen(
+    soLoudHandler.currentSound!.soundEvents.stream.listen(
       (event) {
         // TODO(me): put this elsewhere?
         event.sound.soundEvents.close();
 
         /// It's needed to call dispose when it end else it will
         /// not be cleared
-        SoLoud().disposeSound(currentSound!);
-        currentSound = null;
+        SoLoud().disposeSound(soLoudHandler.currentSound!);
+        soLoudHandler.currentSound = null;
       },
     );
   }
