@@ -24,14 +24,10 @@ class HomeView extends StackedView<HomeViewModel> {
         children: [
           viewModel.soLoudHandler.isPlayerInited
               ? StarField(
-                  starSpeed: 1,
+                  starSpeed: 0.1,
                   starCount: 100,
                   audioData: viewModel.soLoudHandler.playerData.value,
                 )
-              // ? CustomPaint(
-              //     painter: StarsVisualiser(audioData: viewModel.soLoudHandler.playerData.value, canvasSize: size),
-              //     child: Container(),
-              //   )
               : Container(),
           Opacity(opacity: viewModel.showPlayerControls ? 0.6 : 0, child: PlayerControls()),
           Visibility(

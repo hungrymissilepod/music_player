@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app_template/ftt/soloud_handler.dart';
 import 'dart:ffi' as ffi;
 import 'package:flutter_app_template/ftt/visualizer.dart';
 import 'package:num_remap/num_remap.dart';
@@ -91,56 +92,58 @@ class StarsVisualiser extends CustomPainter {
     double averageLowMid = _averageFrequency(lowMid[0], lowMid[1]);
     double averageTreble = _averageFrequency(treble[0], treble[1]);
 
-    if (backgroundParticles.length < maxBackgroundParticles) {
-      var p =
-          StarParticle(size, baseAcceleration: backgroundParticlesBaseAcceleration, maxSize: backgroundMaxParticleSize);
-      backgroundParticles.add(p);
-    }
+    // if (backgroundParticles.length < maxBackgroundParticles) {
+    //   var p =
+    //       StarParticle(size, baseAcceleration: backgroundParticlesBaseAcceleration, maxSize: backgroundMaxParticleSize, circleRadius: );
+    //   backgroundParticles.add(p);
+    // }
 
-    for (int i = 0; i < backgroundParticles.length; i++) {
-      // backgroundParticles[i].update(averageLowMid);
+    // for (int i = 0; i < backgroundParticles.length; i++) {
+    //   backgroundParticles[i].update(averageLowMid);
 
-      var scale = .1 + map(backgroundParticles[i].position.z, 0, size.width, backgroundParticles[i].size, 0);
-      var sx = map(backgroundParticles[i].position.x / backgroundParticles[i].position.z, 0, 1, 0, size.width);
-      var sy = map(backgroundParticles[i].position.y / backgroundParticles[i].position.z, 0, 1, 0, size.height);
+    //   var scale = .1 + map(backgroundParticles[i].position.z, 0, size.width, backgroundParticles[i].size, 0);
+    //   var sx = map(backgroundParticles[i].position.x / backgroundParticles[i].position.z, 0, 1, 0, size.width);
+    //   var sy = map(backgroundParticles[i].position.y / backgroundParticles[i].position.z, 0, 1, 0, size.height);
 
-      var time = DateTime.now().millisecondsSinceEpoch / 1000;
+    //   var time = DateTime.now().millisecondsSinceEpoch / 1000;
 
-      var glowSizeX = 1 * 8 + 2 * (sin(time * .5));
-      var glowSizeY = 1 * 8 + 2 * (cos(time * .75));
+    //   var glowSizeX = 1 * 8 + 2 * (sin(time * .5));
+    //   var glowSizeY = 1 * 8 + 2 * (cos(time * .75));
 
-      var pos = Offset(sx, sy);
-      var rect = Rect.fromCenter(center: pos, width: glowSizeX, height: glowSizeY);
-      canvas.drawRect(rect, whitePaint..color = backgroundParticles[i].color);
+    //   var pos = Offset(sx, sy);
+    //   var rect = Rect.fromCenter(center: pos, width: glowSizeX, height: glowSizeY);
+    //   canvas.drawRect(rect, whitePaint..color = backgroundParticles[i].color);
 
-      // canvas.drawCircle(
-      //   Offset(backgroundParticles[i].position.x, backgroundParticles[i].position.y),
-      //   backgroundParticles[i].size,
-      //   whitePaint..color = backgroundParticles[i].color,
-      // );
+    // canvas.drawCircle(
+    //   Offset(backgroundParticles[i].position.x, backgroundParticles[i].position.y),
+    //   backgroundParticles[i].size,
+    //   whitePaint..color = backgroundParticles[i].color,
+    // );
 
-      /// Reset any particles that go off screen
-      // if (backgroundParticles[i].shouldCull()) {
-      //   backgroundParticles[i].resetPosition(size, false);
-      //   backgroundParticles[i].initRandomly(size);
-      // } else {
-      //   backgroundParticles[i].update(averageLowMid);
+    /// Reset any particles that go off screen
+    // if (backgroundParticles[i].shouldCull()) {
+    //   backgroundParticles[i].resetPosition(size, false);
+    //   backgroundParticles[i].initRandomly(size);
+    // } else {
+    //   backgroundParticles[i].update(averageLowMid);
 
-      //   canvas.drawCircle(
-      //     Offset(backgroundParticles[i].position.x, backgroundParticles[i].position.y),
-      //     backgroundParticles[i].size,
-      //     whitePaint..color = backgroundParticles[i].color,
-      //   );
-      // }
-    }
+    //   canvas.drawCircle(
+    //     Offset(backgroundParticles[i].position.x, backgroundParticles[i].position.y),
+    //     backgroundParticles[i].size,
+    //     whitePaint..color = backgroundParticles[i].color,
+    //   );
+    // }
+    // }
 
-    /// Draw particles
+    /// Draw particles around circle
     // if (particles.length < maxParticles) {
     //   var p = StarParticle(size, circleRadius: midCircleRadius, maxSize: maxParticleSize);
     //   particles.add(p);
     // }
 
     // for (int i = particles.length - 1; i >= 0; i--) {
+    //   print('running');
+
     //   /// Reset any particles that go off screen
     //   if (particles[i].shouldCull()) {
     //     particles[i].resetPosition();
@@ -221,7 +224,7 @@ class StarParticle {
     _accelerationValue = baseAcceleration;
     _maxSize = maxSize;
 
-    resetPosition(canvasSize, randomZ);
+    resetPosition();
 
     if (circleRadius != null) {
       initAroundCircle(circleRadius);
@@ -232,15 +235,15 @@ class StarParticle {
     setSize();
   }
 
-  void resetPosition(Size canvasSize, bool randomZ) {
-    // pos = vector_math.Vector2(0, 0);
-    // velocity = vector_math.Vector2(0, 0);
-    // acceleration = vector_math.Vector2(0, 0);
+  void resetPosition() {
+    pos = vector_math.Vector2(0, 0);
+    velocity = vector_math.Vector2(0, 0);
+    acceleration = vector_math.Vector2(0, 0);
 
-    position.x = (-1 + random.nextDouble() * 2) * canvasSize.width / 2;
-    position.y = (-1 + random.nextDouble() * 2) * canvasSize.height / 2;
-    position.z = randomZ ? random.nextDouble() * maxZ : maxZ;
-    print('z: ${position.z}');
+    // position.x = (-1 + random.nextDouble() * 2) * canvasSize.width / 2;
+    // position.y = (-1 + random.nextDouble() * 2) * canvasSize.height / 2;
+    // position.z = randomZ ? random.nextDouble() * maxZ : maxZ;
+    // print('z: ${position.z}');
   }
 
   void setSize() {
@@ -248,17 +251,17 @@ class StarParticle {
   }
 
   void initRandomly(Size canvasSize) {
-    // pos = vector_math.Vector2(
-    //   (-1 + random.nextDouble() * 2) * canvasSize.width / 2,
-    //   (-1 + random.nextDouble() * 2) * canvasSize.height / 2,
-    // );
-    // acceleration = pos.clone()
-    //   ..multiply(
-    //     vector_math.Vector2(
-    //       random.nextDouble() * _accelerationValue,
-    //       random.nextDouble() * _accelerationValue,
-    //     ),
-    //   );
+    pos = vector_math.Vector2(
+      (-1 + random.nextDouble() * 2) * canvasSize.width / 2,
+      (-1 + random.nextDouble() * 2) * canvasSize.height / 2,
+    );
+    acceleration = pos.clone()
+      ..multiply(
+        vector_math.Vector2(
+          random.nextDouble() * _accelerationValue,
+          random.nextDouble() * _accelerationValue,
+        ),
+      );
   }
 
   void initAroundCircle(double circleRadius) {
@@ -266,53 +269,53 @@ class StarParticle {
     var angle = random.nextDouble() * pi * 2;
 
     /// Plot this particle around edge of the circle
-    // pos = vector_math.Vector2(
-    //   cos(angle) * circleRadius,
-    //   sin(angle) * circleRadius,
-    // );
+    pos = vector_math.Vector2(
+      cos(angle) * circleRadius,
+      sin(angle) * circleRadius,
+    );
 
-    // acceleration = pos.clone()
-    //   ..multiply(
-    //     vector_math.Vector2(
-    //       random.nextDouble() * _accelerationValue,
-    //       random.nextDouble() * _accelerationValue,
-    //     ),
-    //   );
+    acceleration = pos.clone()
+      ..multiply(
+        vector_math.Vector2(
+          random.nextDouble() * _accelerationValue,
+          random.nextDouble() * _accelerationValue,
+        ),
+      );
   }
 
   update(double bass) {
-    // if (bass.round() == 0) {
-    //   vector_math.Vector2 add = acceleration;
-    //   velocity.add(add);
-    // } else {
-    //   double value = 0.1 + _accelerationValue + bass;
-    //   vector_math.Vector2 add = acceleration..multiply(vector_math.Vector2(value, value));
-    //   velocity.add(add);
-    // }
+    if (bass.round() == 0) {
+      vector_math.Vector2 add = acceleration;
+      velocity.add(add);
+    } else {
+      double value = 0.1 + _accelerationValue + bass;
+      vector_math.Vector2 add = acceleration..multiply(vector_math.Vector2(value, value));
+      velocity.add(add);
+    }
 
-    // pos.add(velocity);
+    pos.add(velocity);
 
-    position.z -= 0.0001;
+    // position.z -= 0.0001;
     // print('update z: ${position.z}');
-    shouldCull();
+    // shouldCull();
   }
 
   /// If particle goes off screen
   bool shouldCull() {
-    if (position.z < minZ) {
-      // print('cull');
-      resetPosition(_canvasSize, false);
-      return true;
-    } else {
-      position.z = minZ;
-    }
-
-    // if (pos.x < -_canvasSize.width / 2 ||
-    //     pos.x > _canvasSize.width / 2 ||
-    //     pos.y < -_canvasSize.height / 2 ||
-    //     pos.y > _canvasSize.height / 2) {
+    // if (position.z < minZ) {
+    //   // print('cull');
+    //   resetPosition();
     //   return true;
+    // } else {
+    //   position.z = minZ;
     // }
+
+    if (pos.x < -_canvasSize.width / 2 ||
+        pos.x > _canvasSize.width / 2 ||
+        pos.y < -_canvasSize.height / 2 ||
+        pos.y > _canvasSize.height / 2) {
+      return true;
+    }
     return false;
   }
 }
@@ -377,7 +380,7 @@ class _StarFieldState extends State<StarField> {
       if (averageBass.round() == 0) {
         advanceStars(widget.starSpeed);
       } else {
-        advanceStars(widget.starSpeed + (averageBass * 2));
+        advanceStars(widget.starSpeed + (averageBass));
       }
     });
   }
@@ -492,6 +495,12 @@ class StarFieldPainter extends CustomPainter {
     ..strokeCap = StrokeCap.round
     ..strokeJoin = StrokeJoin.miter;
 
+  Paint whitePaint = Paint()
+    ..color = Colors.white
+    ..strokeWidth = 2.5
+    ..strokeCap = StrokeCap.round
+    ..strokeJoin = StrokeJoin.miter;
+
   @override
   void paint(Canvas canvas, Size size) {
     if (stars.isEmpty) return;
@@ -527,6 +536,29 @@ class StarFieldPainter extends CustomPainter {
     double averageBass = _averageFrequency(bass[0], bass[1]);
     double averageLowMid = _averageFrequency(lowMid[0], lowMid[1]);
     double averageTreble = _averageFrequency(treble[0], treble[1]);
+
+    /// Draw particles around circle
+    if (particles.length < maxParticles) {
+      var p = StarParticle(size, circleRadius: midCircleRadius, maxSize: maxParticleSize);
+      particles.add(p);
+    }
+
+    for (int i = particles.length - 1; i >= 0; i--) {
+      /// Reset any particles that go off screen
+      /// TODO: make sure we only reset these particle positions if we are playing because they should only be displayed when playing
+      if (particles[i].shouldCull() && SoLoudHandler().isPlaying.value) {
+        particles[i].resetPosition();
+        particles[i].initAroundCircle(midCircleRadius);
+      } else {
+        particles[i].update(averageBass);
+
+        canvas.drawCircle(
+          Offset(particles[i].pos.x, particles[i].pos.y),
+          particles[i].size,
+          whitePaint..color = particles[i].color,
+        );
+      }
+    }
 
     /// We draw the circle in two halves
     /// The first time we draw the right side and the second time we draw the left side
