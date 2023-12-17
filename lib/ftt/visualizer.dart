@@ -91,7 +91,7 @@ class _VisualizerState extends State<Visualizer> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<ui.Image?>(
-      future: widget.viewModel.soLoudHandler.buildImageCallback(),
+      future: widget.viewModel.soLoudHandler.buildImageFromAllSamplesMatrix(),
       builder: (context, dataTexture) {
         if (!dataTexture.hasData || dataTexture.data == null) {
           return Placeholder(

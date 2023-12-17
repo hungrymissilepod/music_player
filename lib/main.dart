@@ -32,6 +32,7 @@ Change these values in Runner.rc:
 
 TODO:
 
+- Copy experiment starfield painter into this app and try it out. Work out why the star visualiser is running so quickly.
 - Fix bug where you can play the same sound twice accidentally. Disable play button if you just pressed it or something. Wait until the sound is played.
 - Control visualiser based on average tempo/frequency of music
 - Add playing position bar and allow seeking position
