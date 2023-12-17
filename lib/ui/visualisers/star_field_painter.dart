@@ -25,7 +25,7 @@ class StarFieldPainter extends CustomPainter {
   final Size canvasSize;
 
   /// Amount the circle should increase in size by by multipling treble data
-  final int trebleMultiplier = 50;
+  final int trebleMultiplier = 30;
 
   /// Number of FFT samples
   final int samples = 256;
@@ -123,7 +123,6 @@ class StarFieldPainter extends CustomPainter {
     /// The first time we draw the right side and the second time we draw the left side
     for (int t = -1; t <= 1; t += 2) {
       List<Offset> points = [];
-
       for (double i = 0; i < 181; i += 1) {
         final index = i.remap(0, 180, 0, samples - 1).floor();
 
@@ -141,29 +140,29 @@ class StarFieldPainter extends CustomPainter {
         double y = r * cos(i * (pi / 180));
         points.add(Offset(x, y));
       }
-      circlePaint.strokeWidth = 2.5 + (averageTreble * 15);
+      circlePaint.strokeWidth = 2.5 + (averageTreble * 10);
 
-      double a = getRad();
-      double h = (_hue * 0.5 + random.nextDouble() * 40.0 + a / pi * 30) % 360;
+      // double a = getRad();
+      // double h = (_hue * 0.5 + random.nextDouble() * 40.0 + a / pi * 30) % 360;
 
-      int color = HSLColor.fromAHSL(1.0, h, 1.0, getBool(0.1) ? 1.0 : 0.4).toColor().value;
+      // int color = HSLColor.fromAHSL(1.0, h, 1.0, getBool(0.1) ? 1.0 : 0.4).toColor().value;
 
       canvas.drawPoints(ui.PointMode.polygon, points, circlePaint);
     }
   }
 
-  double _hue = 0.0;
-  double getRad() {
-    return getDouble(0, pi * 2);
-  }
+  // double _hue = 0.0;
+  // double getRad() {
+  //   return getDouble(0, pi * 2);
+  // }
 
-  double getDouble(double min, double max) {
-    return min + random.nextDouble() * (max - min);
-  }
+  // double getDouble(double min, double max) {
+  //   return min + random.nextDouble() * (max - min);
+  // }
 
-  bool getBool([double chance = 0.5]) {
-    return random.nextDouble() < chance;
-  }
+  // bool getBool([double chance = 0.5]) {
+  //   return random.nextDouble() < chance;
+  // }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {

@@ -15,14 +15,19 @@ TODO:
 
 
 - Fix player controls and make them look better
+- Add playing position bar and allow seeking position
+- Fix any issues and clean up code
+- try getting the cirlce to be drawn in one motion so that we do not have the two joins showing
+
+
 - Make player controls fade out over time if user does not interact with them
 - try chaning big particls so they move in the z axis like the background stars do.
 - get average frequency of the song (average tempo) and use that as the baseline speed of the visualiser.
   this way slower tempo songs are not at full speed and vice versa.
 - Add bloom shader to circle in star visualiser
 - Fix bug where you can play the same sound twice accidentally. Disable play button if you just pressed it or something. Wait until the sound is played.
-- Add playing position bar and allow seeking position
-- Fix any issues and clean up code
+
+
 - Improve StarVisualiser
 - Enable playing audio when app in background
 - Do not update paint of visualisers when app is in background to help free up performance? See if this makes a difference.

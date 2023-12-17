@@ -103,6 +103,12 @@ class _VisualizerState extends State<Visualizer> with SingleTickerProviderStateM
           );
         }
 
+        /// TODO: need a better way to hide these visualisers if not wanting to show them.
+        /// Currently this widget is in charge of loading fft data with the FutureBuilder above. Move that to HomeView or something.
+        if (!widget.viewModel.fpsMonitorEnabled) {
+          return Container();
+        }
+
         return LayoutBuilder(
           builder: (context, constraints) {
             return Column(

@@ -46,8 +46,9 @@ class SoLoudHandler {
   FftController visualizerController = FftController()..changeIsVisualizerForPlayer(true);
 
   SoundProps? currentSound;
-  double prevSoundPosition = 0;
   final ValueNotifier<bool> isPlaying = ValueNotifier(false);
+
+  final ValueNotifier<double> currentSongPositon = ValueNotifier(0.0);
 
   /// For some reason there is no simple way to check if we are currently playing music.
   /// We need to check if there is a [currentSound] and periodically check if sound position
@@ -57,8 +58,8 @@ class SoLoudHandler {
       if (currentSound!.handle.isNotEmpty) {
         var soundPosition = SoLoud().getPosition(currentSound!.handle.last).position;
 
-        if (soundPosition != prevSoundPosition) {
-          prevSoundPosition = soundPosition;
+        if (soundPosition != currentSongPositon.value) {
+          currentSongPositon.value = soundPosition;
           isPlaying.value = true;
           return;
         }

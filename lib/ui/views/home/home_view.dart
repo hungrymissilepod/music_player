@@ -30,21 +30,21 @@ class HomeView extends StackedView<HomeViewModel> {
                 )
               : Container(),
           Opacity(opacity: viewModel.showPlayerControls ? 0.6 : 0, child: PlayerControls()),
-          Visibility(
-            visible: kDebugMode,
-            child: SafeArea(
-              child: Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                  onPressed: viewModel.togglePlayerControls,
-                  icon: Icon(
-                    Icons.close,
-                    color: Colors.blue,
-                  ),
-                ),
-              ),
-            ),
-          ),
+          // Visibility(
+          //   visible: kDebugMode,
+          //   child: SafeArea(
+          //     child: Align(
+          //       alignment: Alignment.topRight,
+          //       child: IconButton(
+          //         onPressed: viewModel.togglePlayerControls,
+          //         icon: Icon(
+          //           Icons.close,
+          //           color: Colors.blue,
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

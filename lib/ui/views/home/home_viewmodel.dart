@@ -12,7 +12,7 @@ enum HomeViewSection { player }
 class HomeViewModel extends BaseViewModel {
   SoLoudHandler soLoudHandler = SoLoudHandler();
 
-  bool fpsMonitorEnabled = true;
+  bool fpsMonitorEnabled = false;
 
   void toggleFpsMonitor() {
     fpsMonitorEnabled = !fpsMonitorEnabled;
@@ -41,11 +41,40 @@ class HomeViewModel extends BaseViewModel {
   int currentSong = 0;
   Timer? timer;
 
+  void updateCurrentSongPositon() {
+    var pos = soLoudHandler.currentSongPositon.value;
+    var length = soLoudHandler.soundLength.value;
+    if (length != 0) {
+      currentSongPositon.value = pos / length;
+    } else {
+      currentSongPositon.value = 0.0;
+    }
+    currentSongPositonFormatted.value = formattedCurrentPosition();
+  }
+
+  final ValueNotifier<double> currentSongPositon = ValueNotifier(0.0);
+  final ValueNotifier<String> currentSongPositonFormatted = ValueNotifier('');
+
   HomeViewModel() {
     runBusyFuture(initSoLoud(), busyObject: HomeViewSection.player);
     timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
       soLoudHandler.updateIsPlaying();
+      updateCurrentSongPositon();
     });
+
+    playCurrentExampleSong();
+  }
+
+  String formattedTime({required int timeInSecond}) {
+    int sec = timeInSecond % 60;
+    int min = (timeInSecond / 60).floor();
+    String minute = min.toString().length <= 1 ? "0$min" : "$min";
+    String second = sec.toString().length <= 1 ? "0$sec" : "$sec";
+    return "$minute : $second";
+  }
+
+  String formattedCurrentPosition() {
+    return formattedTime(timeInSecond: soLoudHandler.currentSongPositon.value.round());
   }
 
   bool isPlaying() => soLoudHandler.isPlaying.value;
@@ -68,6 +97,14 @@ class HomeViewModel extends BaseViewModel {
     SoLoud().stopIsolate();
   }
 
+  Future<void> playPause() async {
+    if (soLoudHandler.currentSound == null) {
+      playCurrentExampleSong();
+      return;
+    }
+    togglePause();
+  }
+
   Future<void> playCurrentExampleSong() async {
     await stop();
     final String path = 'assets/audio/${exampleSongs[currentSong]}';
@@ -83,7 +120,7 @@ class HomeViewModel extends BaseViewModel {
     }
   }
 
-  Future<void> pause() async {
+  Future<void> togglePause() async {
     if (soLoudHandler.currentSound != null) {
       if (soLoudHandler.currentSound!.handle.isNotEmpty) {
         SoLoud().pauseSwitch(soLoudHandler.currentSound!.handle.first);
