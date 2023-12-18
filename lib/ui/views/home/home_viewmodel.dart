@@ -28,14 +28,16 @@ class HomeViewModel extends BaseViewModel {
 
   List<String> exampleSongs = [
     'baddadan.mp3',
-    'sample.mp3',
-    'sample2.mp3',
+    'gods_country.mp3',
+    'highest_in_the_room.mp3',
     'massive&crew.mp3',
     'leavemealone.mp3',
     'Tropical Beeper.mp3',
     'X trackTure.mp3',
     '8_bit_mentality.mp3',
     'range_test.mp3',
+    'sample.mp3',
+    'sample2.mp3',
   ];
 
   int currentSong = 0;
@@ -61,8 +63,6 @@ class HomeViewModel extends BaseViewModel {
       soLoudHandler.updateIsPlaying();
       updateCurrentSongPositon();
     });
-
-    playCurrentExampleSong();
   }
 
   String formattedTime({required int timeInSecond}) {
